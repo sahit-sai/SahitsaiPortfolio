@@ -817,10 +817,16 @@
             ],
             education: [
                 {
-                    degree: "Bachelor's Degree in Computer Science",
-                    school: "University of Tirana",
-                    period: "2013 - 2016",
-                    location: "Tirana, Albania"
+                    degree: "B-Tech IT(information technology) - CGPA: 8.0",
+                    school: "Vishnu Institute of Technology Bhimavaram",
+                    period: "Aug 2024 - MAY 2027",
+                    location: "Bhimavaram, India"
+                },
+                {
+                    degree: "Diploma - Computer Engineering - CGPA: 8.42",
+                    school: "Government Polytechnic Srikakulam",
+                    period: "Dec 2021 - May 2024",
+                    location: "Srikakulam, India"
                 }
             ],
             languages: [
@@ -835,6 +841,11 @@
             const savedData = localStorage.getItem('portfolio_config');
             if (savedData) {
                 portfolioData = JSON.parse(savedData);
+                // Auto-migrate stale default education records to the new settings
+                if (portfolioData.education && portfolioData.education.length === 1 && portfolioData.education[0].school === "University of Tirana") {
+                    portfolioData.education = defaultPortfolioData.education;
+                    localStorage.setItem('portfolio_config', JSON.stringify(portfolioData));
+                }
             }
         } catch (e) {
             console.error('Error loading config:', e);

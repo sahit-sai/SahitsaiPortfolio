@@ -1168,10 +1168,16 @@
             ],
             education: [
                 {
-                    degree: "Bachelor's Degree in Computer Science",
-                    school: "University of Tirana",
-                    period: "2013 - 2016",
-                    location: "Tirana, Albania"
+                    degree: "B-Tech IT(information technology) - CGPA: 8.0",
+                    school: "Vishnu Institute of Technology Bhimavaram",
+                    period: "Aug 2024 - MAY 2027",
+                    location: "Bhimavaram, India"
+                },
+                {
+                    degree: "Diploma - Computer Engineering - CGPA: 8.42",
+                    school: "Government Polytechnic Srikakulam",
+                    period: "Dec 2021 - May 2024",
+                    location: "Srikakulam, India"
                 }
             ],
             languages: [
@@ -1205,6 +1211,11 @@
             if (saved) {
                 try {
                     currentConfig = JSON.parse(saved);
+                    // Auto-migrate stale default education records to the new settings
+                    if (currentConfig.education && currentConfig.education.length === 1 && currentConfig.education[0].school === "University of Tirana") {
+                        currentConfig.education = defaultPortfolioData.education;
+                        localStorage.setItem('portfolio_config', JSON.stringify(currentConfig));
+                    }
                 } catch (e) {
                     console.error('Failed to load storage config', e);
                 }
