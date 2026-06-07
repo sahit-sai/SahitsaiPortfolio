@@ -1,0 +1,2081 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sahit Sai | Portfolio Admin Panel</title>
+    <!-- FontAwesome icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg: #ffffff;
+            --text: #000000;
+            --border: #000000;
+            --primary: #ffd93d; /* Yellow */
+            --cyan: #66d9ef;
+            --pink: #ff85a2;
+            --green: #a8e6cf;
+            --white: #ffffff;
+            --border-width: 4px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Space Grotesk', sans-serif;
+            background-color: #f4e7d7; /* Vintage paper background matching site theme */
+            color: var(--text);
+            padding: 1.5rem;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .admin-window {
+            width: 100%;
+            max-width: 1400px;
+            height: 88vh;
+            min-height: 700px;
+            background: var(--white);
+            border: var(--border-width) solid var(--border);
+            box-shadow: 10px 10px 0 var(--border);
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* Title Bar */
+        .window-header {
+            background: var(--text);
+            color: var(--white);
+            padding: 0.85rem 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: var(--border-width) solid var(--border);
+            user-select: none;
+        }
+
+        .window-dots {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            display: inline-block;
+            border: 1px solid rgba(0, 0, 0, 0.2);
+        }
+
+        .dot-red { background-color: #ff5c5c; }
+        .dot-yellow { background-color: var(--primary); }
+        .dot-green { background-color: var(--green); }
+
+        .window-title {
+            margin-left: 10px;
+            font-family: 'Space Mono', monospace;
+            font-weight: 700;
+            font-size: 0.85rem;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            color: #ddd;
+        }
+
+        .window-badge {
+            background: #1a1a1a;
+            border: 1px solid #333;
+            padding: 0.25rem 0.75rem;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.75rem;
+            font-weight: bold;
+            border-radius: 4px;
+            color: var(--green);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        /* Window Body Split */
+        .window-body {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+            background: var(--white);
+        }
+
+        /* Sidebar Navigation */
+        .sidebar {
+            width: 260px;
+            border-right: var(--border-width) solid var(--border);
+            background: #faf8f5;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 1.75rem 1.25rem;
+            overflow-y: auto;
+        }
+
+        .sidebar-brand {
+            margin-bottom: 1.5rem;
+            border-bottom: 2px solid var(--border);
+            padding-bottom: 1rem;
+        }
+
+        .sidebar-brand h3 {
+            font-size: 1.4rem;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            text-transform: uppercase;
+        }
+
+        .sidebar-brand p {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.75rem;
+            opacity: 0.7;
+            margin-top: 0.1rem;
+        }
+
+        .tabs-vertical {
+            display: flex;
+            flex-direction: column;
+            gap: 0.6rem;
+            flex: 1;
+        }
+
+        .tab-btn {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 700;
+            font-size: 0.9rem;
+            padding: 0.75rem 1rem;
+            border: 2px solid var(--border);
+            background: var(--white);
+            cursor: pointer;
+            text-align: left;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            box-shadow: 2px 2px 0 var(--border);
+            transition: all 0.1s ease;
+            width: 100%;
+        }
+
+        .tab-btn i {
+            width: 18px;
+            text-align: center;
+            font-size: 1rem;
+        }
+
+        .tab-btn:hover {
+            background: #f0ede9;
+            transform: translate(-1px, -1px);
+            box-shadow: 3px 3px 0 var(--border);
+        }
+
+        .tab-btn.active {
+            transform: translate(1px, 1px);
+            box-shadow: 1px 1px 0 var(--border);
+        }
+        
+        .tab-btn:nth-child(1).active { background-color: var(--primary); }
+        .tab-btn:nth-child(2).active { background-color: var(--cyan); }
+        .tab-btn:nth-child(3).active { background-color: var(--pink); }
+        .tab-btn:nth-child(4).active { background-color: var(--green); }
+        .tab-btn:nth-child(5).active { background-color: var(--primary); }
+        .tab-btn:nth-child(6).active { background-color: var(--cyan); }
+        .tab-btn:nth-child(7).active { background-color: var(--pink); }
+        .tab-btn:nth-child(8).active { background-color: var(--green); }
+
+        .sidebar-actions {
+            margin-top: 1.5rem;
+            border-top: 2px solid var(--border);
+            padding-top: 1.25rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .sidebar-actions .btn {
+            width: 100%;
+            justify-content: center;
+        }
+
+        /* Content Area */
+        .content-area {
+            flex: 1;
+            padding: 2.25rem;
+            overflow-y: auto;
+            background: var(--white);
+        }
+
+        /* Custom Scrollbar */
+        .content-area::-webkit-scrollbar,
+        .sidebar::-webkit-scrollbar,
+        .picker-scroll-container::-webkit-scrollbar {
+            width: 8px;
+        }
+        .content-area::-webkit-scrollbar-track,
+        .sidebar::-webkit-scrollbar-track,
+        .picker-scroll-container::-webkit-scrollbar-track {
+            background: #faf8f5;
+            border-left: 1px solid #ddd;
+        }
+        .content-area::-webkit-scrollbar-thumb,
+        .sidebar::-webkit-scrollbar-thumb,
+        .picker-scroll-container::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 4px;
+        }
+
+        .tab-pane {
+            display: none;
+        }
+
+        .tab-pane.active {
+            display: block;
+            animation: fadeIn 0.2s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(4px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Icon Helper Panel */
+        .icon-picker-panel {
+            width: 290px;
+            border-left: var(--border-width) solid var(--border);
+            background: #faf8f5;
+            display: flex;
+            flex-direction: column;
+            padding: 1.75rem 1.15rem;
+            overflow-y: hidden;
+        }
+
+        .picker-header {
+            margin-bottom: 1rem;
+            border-bottom: 2px solid var(--border);
+            padding-bottom: 0.75rem;
+        }
+
+        .picker-header h4 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-transform: uppercase;
+        }
+
+        .picker-header p {
+            font-size: 0.75rem;
+            opacity: 0.7;
+            margin-top: 0.25rem;
+        }
+
+        .picker-search-container {
+            margin-bottom: 1rem;
+        }
+
+        .picker-search-container input {
+            padding: 0.55rem 0.8rem;
+            font-size: 0.85rem;
+            border: 2px solid var(--border);
+            box-shadow: 2px 2px 0 var(--border);
+            width: 100%;
+        }
+
+        .picker-scroll-container {
+            flex: 1;
+            overflow-y: auto;
+            padding-right: 0.25rem;
+        }
+
+        .picker-category {
+            margin-bottom: 1.5rem;
+        }
+
+        .picker-category-title {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: #555;
+            margin-bottom: 0.5rem;
+            border-bottom: 1px dashed var(--border);
+            padding-bottom: 0.2rem;
+        }
+
+        .picker-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 0.45rem;
+        }
+
+        .picker-item {
+            aspect-ratio: 1;
+            border: 2px solid var(--border);
+            background: var(--white);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            border-radius: 6px;
+            box-shadow: 2px 2px 0 var(--border);
+            font-size: 1.2rem;
+            transition: all 0.1s ease;
+        }
+
+        .picker-item:hover {
+            background: var(--primary);
+            transform: translate(-1px, -1px);
+            box-shadow: 3px 3px 0 var(--border);
+        }
+
+        .picker-item:active {
+            transform: translate(1px, 1px);
+            box-shadow: 1px 1px 0 var(--border);
+        }
+
+        /* Forms Elements */
+        .form-group {
+            margin-bottom: 1.25rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.35rem;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 700;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            color: #333;
+            font-family: 'Space Mono', monospace;
+        }
+
+        /* Highlight Active Icon Field */
+        .icon-input-highlight {
+            border-color: var(--primary) !important;
+            background-color: #fffde6 !important;
+            box-shadow: 4px 4px 0 var(--border) !important;
+        }
+
+        input[type="text"], input[type="number"], textarea, select {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            border: 3px solid var(--border);
+            background: var(--white);
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 0.95rem;
+            box-shadow: 3px 3px 0 var(--border);
+            transition: all 0.15s ease;
+            border-radius: 4px;
+        }
+
+        input[type="text"]:focus, input[type="number"]:focus, textarea:focus, select:focus {
+            outline: none;
+            transform: translate(-1px, -1px);
+            box-shadow: 4px 4px 0 var(--border);
+        }
+
+        /* Prepended Inputs */
+        .input-group {
+            display: flex;
+            box-shadow: 3px 3px 0 var(--border);
+            border-radius: 4px;
+            overflow: hidden;
+            border: 3px solid var(--border);
+            background: var(--white);
+        }
+        
+        .input-group-prepend {
+            width: 48px;
+            border-right: 3px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            user-select: none;
+        }
+
+        .input-group input {
+            border: none;
+            box-shadow: none !important;
+            border-radius: 0;
+            padding: 0.8rem 1rem;
+        }
+        
+        .input-group input:focus {
+            transform: none;
+            outline: none;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1.25rem;
+        }
+
+        .section-header-inline {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 1.5rem;
+            margin-bottom: 1.5rem;
+            border-bottom: 3px solid var(--border);
+            padding-bottom: 0.5rem;
+        }
+
+        .section-header-inline h3 {
+            font-size: 1.35rem;
+            text-transform: uppercase;
+            letter-spacing: -0.5px;
+        }
+
+        /* Dynamic list cards */
+        .list-item-card {
+            border: 3px solid var(--border);
+            margin-bottom: 1.5rem;
+            background: var(--white);
+            box-shadow: 4px 4px 0 var(--border);
+            border-radius: 6px;
+            overflow: hidden;
+        }
+
+        .list-item-header {
+            padding: 0.75rem 1.25rem;
+            border-bottom: 3px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 700;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+        }
+
+        .list-item-header h4 {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .list-item-body {
+            padding: 1.25rem;
+        }
+
+        .company-sub-box {
+            border: 2px solid var(--border);
+            background: #fbfbfb;
+            padding: 1.25rem;
+            margin-top: 1rem;
+            position: relative;
+            box-shadow: 3px 3px 0 var(--border);
+            border-radius: 4px;
+        }
+
+        .badge-list-editor {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            border: 3px solid var(--border);
+            padding: 0.75rem;
+            min-height: 70px;
+            background: #fafafa;
+            margin-bottom: 1.25rem;
+            border-radius: 4px;
+        }
+
+        .editor-tag-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.4rem 0.65rem;
+            border: 2px solid var(--border);
+            background: var(--white);
+            font-family: 'Space Mono', monospace;
+            font-size: 0.8rem;
+            font-weight: 700;
+            border-radius: 3px;
+        }
+
+        .editor-tag-badge i:last-child {
+            cursor: pointer;
+            color: #ff5c5c;
+            font-size: 0.9rem;
+        }
+
+        .editor-tag-badge i:last-child:hover {
+            transform: scale(1.15);
+        }
+
+        .highlight-notice {
+            background: var(--primary);
+            padding: 1rem;
+            border: 3px solid var(--border);
+            margin-bottom: 1.5rem;
+            font-weight: 600;
+            font-size: 0.9rem;
+            border-radius: 6px;
+            box-shadow: 4px 4px 0 var(--border);
+        }
+
+        .highlight-notice code {
+            font-family: 'Space Mono', monospace;
+            background: var(--white);
+            padding: 0.1rem 0.35rem;
+            border: 1px solid var(--border);
+            border-radius: 3px;
+        }
+
+        /* Toast notifications */
+        .toast {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: var(--text);
+            color: var(--white);
+            padding: 0.85rem 1.5rem;
+            border: 3px solid var(--border);
+            box-shadow: 4px 4px 0 var(--pink);
+            border-radius: 6px;
+            z-index: 10000;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.85rem;
+            font-weight: 700;
+            display: none;
+            animation: slideUp 0.2s ease-out;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        /* Responsiveness */
+        @media (max-width: 1024px) {
+            body {
+                padding: 0.5rem;
+            }
+            .admin-window {
+                height: auto;
+                min-height: auto;
+                box-shadow: 6px 6px 0 var(--border);
+                border-radius: 8px;
+            }
+            .window-body {
+                flex-direction: column;
+            }
+            .sidebar {
+                width: 100%;
+                border-right: none;
+                border-bottom: var(--border-width) solid var(--border);
+                padding: 1.25rem;
+            }
+            .tabs-vertical {
+                flex-direction: row;
+                overflow-x: auto;
+                padding-bottom: 0.6rem;
+                flex: none;
+                gap: 0.5rem;
+            }
+            .tab-btn {
+                white-space: nowrap;
+                width: auto;
+                padding: 0.6rem 0.85rem;
+            }
+            .sidebar-brand {
+                display: none;
+            }
+            .sidebar-actions {
+                display: flex;
+                flex-direction: row;
+                margin-top: 1rem;
+                padding-top: 1rem;
+            }
+            .sidebar-actions .btn {
+                flex: 1;
+            }
+            .icon-picker-panel {
+                width: 100%;
+                border-left: none;
+                border-top: var(--border-width) solid var(--border);
+                height: 320px;
+                padding: 1.25rem;
+            }
+            .picker-scroll-container {
+                display: flex;
+                gap: 1.5rem;
+                overflow-x: auto;
+                overflow-y: hidden;
+                padding-bottom: 0.5rem;
+            }
+            .picker-category {
+                margin-bottom: 0;
+                min-width: 240px;
+                display: flex;
+                flex-direction: column;
+            }
+            .picker-grid {
+                grid-template-columns: repeat(4, 1fr);
+                gap: 0.35rem;
+                flex: 1;
+            }
+        }
+
+        /* Lock screen styling */
+        .lock-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: #f4e7d7; /* Matches site bg */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 999999;
+            padding: 1rem;
+        }
+
+        .lock-card {
+            width: 100%;
+            max-width: 440px;
+            background: var(--white);
+            border: var(--border-width) solid var(--border);
+            box-shadow: 8px 8px 0 var(--border);
+            border-radius: 12px;
+            padding: 2.5rem 2rem;
+            text-align: center;
+            animation: lockCardPop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        @keyframes lockCardPop {
+            from { transform: scale(0.9) translateY(10px); opacity: 0; }
+            to { transform: scale(1) translateY(0); opacity: 1; }
+        }
+
+        .lock-icon-container {
+            font-size: 3.5rem;
+            margin-bottom: 1.25rem;
+            animation: pulseLock 2s infinite ease-in-out;
+        }
+
+        @keyframes pulseLock {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .lock-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: -0.5px;
+            margin-bottom: 0.5rem;
+        }
+
+        .lock-subtitle {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.8rem;
+            opacity: 0.7;
+            margin-bottom: 2rem;
+            text-transform: uppercase;
+        }
+
+        .lock-shake {
+            animation: lockShake 0.4s ease;
+        }
+
+        @keyframes lockShake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-8px); }
+            40%, 80% { transform: translateX(8px); }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Access Lock Overlay -->
+    <div id="lock-overlay" class="lock-overlay">
+        <div class="lock-card" id="lock-card">
+            <div class="lock-icon-container">
+                <i class="fas fa-lock" style="color: var(--pink);"></i>
+            </div>
+            <h3 class="lock-title">System Control Panel</h3>
+            <p class="lock-subtitle">Enter Decryption Key to Unlock</p>
+            <div class="form-group" style="text-align: left;">
+                <label for="admin-passkey">Access Password</label>
+                <div class="input-group">
+                    <span class="input-group-prepend" style="background-color: var(--primary);"><i class="fas fa-key"></i></span>
+                    <input type="password" id="admin-passkey" placeholder="••••••••••••" onkeydown="handleLockKeyDown(event)">
+                </div>
+            </div>
+            <button onclick="attemptUnlock()" class="btn btn-yellow" style="width: 100%; justify-content: center; margin-top: 0.5rem;">
+                <i class="fas fa-unlock-alt"></i> Unlock System
+            </button>
+        </div>
+    </div>
+
+    <div class="admin-window">
+        <!-- Window Title Bar -->
+        <div class="window-header">
+            <div class="window-dots">
+                <span class="dot dot-red"></span>
+                <span class="dot dot-yellow"></span>
+                <span class="dot dot-green"></span>
+                <span class="window-title">sahitsai_admin_panel_v2.exe</span>
+            </div>
+            <div class="window-actions">
+                <span class="window-badge"><i class="fas fa-server"></i> STATUS: LOCAL STAGE</span>
+            </div>
+        </div>
+
+        <div class="window-body">
+            <!-- Sidebar Navigation -->
+            <aside class="sidebar">
+                <div class="sidebar-brand">
+                    <h3>Sahit Sai</h3>
+                    <p>PORTFOLIO BUILDER</p>
+                </div>
+                <div class="tabs-vertical">
+                    <button class="tab-btn active" onclick="switchTab(0)"><i class="fas fa-id-card"></i> Hero & Socials</button>
+                    <button class="tab-btn" onclick="switchTab(1)"><i class="fas fa-user"></i> About Text</button>
+                    <button class="tab-btn" onclick="switchTab(2)"><i class="fas fa-route"></i> Journey Timeline</button>
+                    <button class="tab-btn" onclick="switchTab(3)"><i class="fas fa-map-marked-alt"></i> Map Settings</button>
+                    <button class="tab-btn" onclick="switchTab(4)"><i class="fas fa-brain"></i> Skills Categories</button>
+                    <button class="tab-btn" onclick="switchTab(5)"><i class="fas fa-folder-open"></i> Projects Grid</button>
+                    <button class="tab-btn" onclick="switchTab(6)"><i class="fas fa-graduation-cap"></i> Edu & Languages</button>
+                    <button class="tab-btn" onclick="switchTab(7)"><i class="fas fa-database"></i> Backup & Export</button>
+                </div>
+                <div class="sidebar-actions">
+                    <button onclick="saveToLocalStorage()" class="btn btn-yellow"><i class="fas fa-save"></i> Save Changes</button>
+                    <a href="../" target="_blank" class="btn btn-white"><i class="fas fa-eye"></i> Preview Site</a>
+                    <button onclick="lockAdmin()" class="btn btn-danger btn-small" style="width: 100%; margin-top: 0.25rem;"><i class="fas fa-lock"></i> Lock Session</button>
+                </div>
+            </aside>
+
+            <!-- Main Content Area -->
+            <main class="content-area">
+                <!-- Tab 0: Hero & Socials -->
+                <div class="tab-pane active">
+                    <div class="form-group">
+                        <label for="hero-desc">Hero Description (HTML allowed)</label>
+                        <textarea id="hero-desc"></textarea>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="social-github">GitHub Link</label>
+                            <div class="input-group">
+                                <span class="input-group-prepend" style="background-color: var(--cyan);"><i class="fab fa-github"></i></span>
+                                <input type="text" id="social-github">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="social-linkedin">LinkedIn Link</label>
+                            <div class="input-group">
+                                <span class="input-group-prepend" style="background-color: var(--pink);"><i class="fab fa-linkedin-in"></i></span>
+                                <input type="text" id="social-linkedin">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="social-email">Email Address</label>
+                        <div class="input-group">
+                            <span class="input-group-prepend" style="background-color: var(--primary);"><i class="fas fa-envelope"></i></span>
+                            <input type="text" id="social-email">
+                        </div>
+                    </div>
+
+                    <div class="section-header-inline" style="margin-top: 2rem;">
+                        <h3>Hero Tech Badges</h3>
+                    </div>
+                    <div id="hero-badges-list" class="badge-list-editor"></div>
+                    <div class="form-row" style="grid-template-columns: 2fr 2fr 1fr; align-items: end;">
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <label for="badge-name">Badge Name</label>
+                            <input type="text" id="badge-name" placeholder="e.g. Node.js">
+                        </div>
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <label for="badge-icon">Icon Class (FontAwesome/Devicon)</label>
+                            <input type="text" id="badge-icon" placeholder="e.g. fab fa-node-js">
+                        </div>
+                        <button onclick="addHeroBadge()" class="btn btn-cyan" style="width: 100%; height: 47px;">Add Badge</button>
+                    </div>
+                </div>
+
+                <!-- Tab 1: About Text -->
+                <div class="tab-pane">
+                    <div class="highlight-notice" style="background: var(--cyan);">
+                        🎨 <strong>Highlights formatting:</strong> Use HTML spans to add colored highlights inside your paragraphs:<br>
+                        • <code>&lt;span class="highlight highlight-yellow"&gt;Text&lt;/span&gt;</code> for Yellow<br>
+                        • <code>&lt;span class="highlight highlight-pink"&gt;Text&lt;/span&gt;</code> for Pink<br>
+                        • <code>&lt;span class="highlight highlight-cyan"&gt;Text&lt;/span&gt;</code> for Cyan<br>
+                        • <code>&lt;span class="highlight highlight-green"&gt;Text&lt;/span&gt;</code> for Green
+                    </div>
+                    <div class="section-header-inline">
+                        <h3>About Paragraphs</h3>
+                        <button onclick="addAboutParagraph()" class="btn btn-green"><i class="fas fa-plus"></i> Add Paragraph</button>
+                    </div>
+                    <div id="about-paragraphs-container"></div>
+                </div>
+
+                <!-- Tab 2: Journey Timeline -->
+                <div class="tab-pane">
+                    <div class="section-header-inline">
+                        <h3>Experience Timeline</h3>
+                        <button onclick="addTimelineItem()" class="btn btn-green"><i class="fas fa-plus"></i> Add Timeline Card</button>
+                    </div>
+                    <div id="timeline-container"></div>
+                </div>
+
+                <!-- Tab 3: Map Coords -->
+                <div class="tab-pane">
+                    <div class="section-header-inline">
+                        <h3>Map Settings</h3>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="map-center-lat">Center Latitude</label>
+                            <input type="number" id="map-center-lat" step="0.0001">
+                        </div>
+                        <div class="form-group">
+                            <label for="map-center-lng">Center Longitude</label>
+                            <input type="number" id="map-center-lng" step="0.0001">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="map-zoom">Initial Zoom Level</label>
+                        <input type="number" id="map-zoom" min="1" max="18">
+                    </div>
+
+                    <div class="section-header-inline" style="margin-top: 2rem;">
+                        <h3>Map Location Markers</h3>
+                        <button onclick="addMapLocation()" class="btn btn-green"><i class="fas fa-plus"></i> Add Location Marker</button>
+                    </div>
+                    <div id="map-locations-container"></div>
+                </div>
+
+                <!-- Tab 4: Skills Box -->
+                <div class="tab-pane">
+                    <div class="section-header-inline">
+                        <h3>Skill Categories</h3>
+                        <button onclick="addSkillCategory()" class="btn btn-green"><i class="fas fa-plus"></i> Add Category Box</button>
+                    </div>
+                    <div id="skills-container"></div>
+                </div>
+
+                <!-- Tab 5: Projects -->
+                <div class="tab-pane">
+                    <div class="section-header-inline">
+                        <h3>Portfolio Projects</h3>
+                        <button onclick="addProject()" class="btn btn-green"><i class="fas fa-plus"></i> Add Project Card</button>
+                    </div>
+                    <div id="projects-container"></div>
+                </div>
+
+                <!-- Tab 6: Education & Langs -->
+                <div class="tab-pane">
+                    <div class="section-header-inline">
+                        <h3>Education Timeline</h3>
+                        <button onclick="addEducationItem()" class="btn btn-green"><i class="fas fa-plus"></i> Add Degree</button>
+                    </div>
+                    <div id="education-container"></div>
+
+                    <div class="section-header-inline" style="margin-top: 2rem;">
+                        <h3>Spoken/Programming Languages</h3>
+                        <button onclick="addLanguageItem()" class="btn btn-green"><i class="fas fa-plus"></i> Add Language</button>
+                    </div>
+                    <div id="languages-container"></div>
+                </div>
+
+                <!-- Tab 7: Backup & Export -->
+                <div class="tab-pane">
+                    <div class="section-header-inline">
+                        <h3>Backup Configuration JSON</h3>
+                    </div>
+                    <p style="margin-bottom: 1.5rem;">Save your entire portfolio configuration data file to back it up or move it between machines.</p>
+                    <div class="action-buttons" style="margin-bottom: 3rem;">
+                        <button onclick="exportConfig()" class="btn btn-cyan"><i class="fas fa-download"></i> Export portfolio_config.json</button>
+                        <button onclick="document.getElementById('import-file-input').click()" class="btn btn-white"><i class="fas fa-upload"></i> Import Config JSON</button>
+                        <input type="file" id="import-file-input" style="display: none;" onchange="importConfig(event)">
+                    </div>
+
+                    <div class="section-header-inline">
+                        <h3>Compile Static Production HTML</h3>
+                    </div>
+                    <p style="margin-bottom: 1.5rem;">This generates a fully self-contained, pre-compiled static <code>index.html</code> with all your current edits baked directly into the default portfolio structure. This means the site will load lightning-fast for anyone visiting, without depending on localStorage!</p>
+                    <div class="action-buttons">
+                        <button onclick="exportProductionHtml()" class="btn btn-pink" style="font-size: 1.1rem; padding: 1rem 2rem;"><i class="fas fa-magic"></i> Generate & Download index.html</button>
+                    </div>
+                </div>
+            </main>
+
+            <!-- Icon Picker Sidebar -->
+            <aside class="icon-picker-panel">
+                <div class="picker-header">
+                    <h4><i class="fas fa-icons"></i> Icon Helper</h4>
+                    <p>Click any icon to insert into active input field</p>
+                </div>
+                <div class="picker-search-container">
+                    <input type="text" id="icon-search" placeholder="Search icons..." oninput="filterIcons()">
+                </div>
+                <div class="picker-scroll-container">
+                    <div class="picker-category" data-cat="languages">
+                        <div class="picker-category-title">Languages</div>
+                        <div class="picker-grid">
+                            <button type="button" class="picker-item" onclick="selectIcon('fab fa-python')" title="Python"><i class="fab fa-python"></i></button>
+                            <button type="button" class="picker-item" onclick="selectIcon('fab fa-js')" title="JavaScript"><i class="fab fa-js"></i></button>
+                            <button type="button" class="picker-item" onclick="selectIcon('fab fa-java')" title="Java"><i class="fab fa-java"></i></button>
+                            <button type="button" class="picker-item" onclick="selectIcon('fab fa-html5')" title="HTML5"><i class="fab fa-html5"></i></button>
+                            <button type="button" class="picker-item" onclick="selectIcon('fab fa-css3-alt')" title="CSS3"><i class="fab fa-css3-alt"></i></button>
+                            <button type="button" class="picker-item" onclick="selectIcon('fab fa-golang')" title="Go"><i class="fab fa-golang"></i></button>
+                            <button type="button" class="picker-item" onclick="selectIcon('fab fa-rust')" title="Rust"><i class="fab fa-rust"></i></button>
+                            <button type="button" class="picker-item" onclick="selectIcon('fab fa-php')" title="PHP"><i class="fab fa-php"></i></button>
+                        </div>
+                    </div>
+                    <div class="picker-category" data-cat="frameworks">
+                        <div class="picker-category-title">Frameworks</div>
+                        <div class="picker-grid">
+                            <button type="button" class="picker-item" onclick="selectIcon('fab fa-react')" title="React"><i class="fab fa-react"></i></button>
+                            <button type="button" class="picker-item" onclick="selectIcon('fab fa-angular')" title="Angular"><i class="fab fa-angular"></i></button>
+                            <button type="button" class="picker-item" onclick="selectIcon('fab fa-vuejs')" title="Vue.js"><i class="fab fa-vuejs"></i></button>
+                            <button type="button" class="picker-item" onclick="selectIcon('fab fa-node-js')" title="Node.js"><i class="fab fa-node-js"></i></button>
+                            <button type="button" class="picker-item" onclick="selectIcon('fab fa-laravel')" title="Laravel"><i class="fab fa-laravel"></i></button>
+                            <button type="button" class="picker-item" onclick="selectIcon('fab fa-bootstrap')" title="Bootstrap"><i class="fab fa-bootstrap"></i></button>
+                        </div>
+                    </div>
+                    <div class="picker-category" data-cat="tools">
+                        <div class="picker-category-title">Tools & Cloud</div>
+                        <div class="picker-grid">
+                            <button type="button" class="picker-item" onclick="selectIcon('fab fa-git-alt')" title="Git"><i class="fab fa-git-alt"></i></button>
+                            <button type="button" class="picker-item" onclick="selectIcon('fab fa-github')" title="GitHub"><i class="fab fa-github"></i></button>
+                            <button type="button" class="picker-item" onclick="selectIcon('fab fa-aws')" title="AWS"><i class="fab fa-aws"></i></button>
+                            <button type="button" class="picker-item" onclick="selectIcon('fab fa-google')" title="GCP"><i class="fab fa-google"></i></button>
+                            <button type="button" class="picker-item" onclick="selectIcon('fab fa-docker')" title="Docker"><i class="fab fa-docker"></i></button>
+                            <button type="button" class="picker-item" onclick="selectIcon('fab fa-figma')" title="Figma"><i class="fab fa-figma"></i></button>
+                        </div>
+                    </div>
+                    <div class="picker-category" data-cat="general">
+                        <div class="picker-category-title">General UI</div>
+                        <div class="picker-grid">
+                            <button type="button" class="picker-item" onclick="selectIcon('fas fa-brain')" title="Brain / AI"><i class="fas fa-brain"></i></button>
+                            <button type="button" class="picker-item" onclick="selectIcon('fas fa-database')" title="Database"><i class="fas fa-database"></i></button>
+                            <button type="button" class="picker-item" onclick="selectIcon('fas fa-server')" title="Server"><i class="fas fa-server"></i></button>
+                            <button type="button" class="picker-item" onclick="selectIcon('fas fa-cloud')" title="Cloud"><i class="fas fa-cloud"></i></button>
+                            <button type="button" class="picker-item" onclick="selectIcon('fas fa-code')" title="Code"><i class="fas fa-code"></i></button>
+                            <button type="button" class="picker-item" onclick="selectIcon('fas fa-cog')" title="Gear / Settings"><i class="fas fa-cog"></i></button>
+                            <button type="button" class="picker-item" onclick="selectIcon('fas fa-tools')" title="Tools"><i class="fas fa-tools"></i></button>
+                            <button type="button" class="picker-item" onclick="selectIcon('fas fa-graduation-cap')" title="Graduation Cap"><i class="fas fa-graduation-cap"></i></button>
+                            <button type="button" class="picker-item" onclick="selectIcon('fas fa-briefcase')" title="Briefcase"><i class="fas fa-briefcase"></i></button>
+                            <button type="button" class="picker-item" onclick="selectIcon('fas fa-map-marker-alt')" title="Map Marker"><i class="fas fa-map-marker-alt"></i></button>
+                            <button type="button" class="picker-item" onclick="selectIcon('fas fa-folder-open')" title="Folder"><i class="fas fa-folder-open"></i></button>
+                            <button type="button" class="picker-item" onclick="selectIcon('fas fa-terminal')" title="Terminal"><i class="fas fa-terminal"></i></button>
+                            <button type="button" class="picker-item" onclick="selectIcon('fas fa-laptop')" title="Laptop"><i class="fas fa-laptop"></i></button>
+                            <button type="button" class="picker-item" onclick="selectIcon('fas fa-star')" title="Star"><i class="fas fa-star"></i></button>
+                            <button type="button" class="picker-item" onclick="selectIcon('fas fa-heart')" title="Heart"><i class="fas fa-heart"></i></button>
+                            <button type="button" class="picker-item" onclick="selectIcon('fas fa-link')" title="Link"><i class="fas fa-link"></i></button>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+        </div>
+    </div>
+
+    <!-- Toast Notifications -->
+    <div id="toast" class="toast"></div>
+
+    <!-- Configuration Script -->
+    <script>
+        // Default configuration definition matching index.html
+        const defaultPortfolioData = {
+            hero: {
+                description: `I’m a technology enthusiast passionate about <strong>Artificial Intelligence</strong>, <strong>AI tools</strong>, and modern software development. I love working with <strong>Python</strong>, <strong>Java</strong>, <strong>JavaScript</strong>, and building innovative digital solutions with emerging technologies.`,
+                github: "https://github.com/sahit-sai",
+                linkedin: "https://www.linkedin.com/in/sahitsaipothala/",
+                email: "sahitsai6@gmail.com",
+                badges: [
+                    { name: "Node.js", icon: "fab fa-node-js" },
+                    { name: "React", icon: "fab fa-react" },
+                    { name: "Python", icon: "fab fa-python" },
+                    { name: "JavaScript", icon: "fab fa-js" },
+                    { name: "HTML", icon: "fab fa-html5" },
+                    { name: "TypeScript", icon: "fab fa-css3" },
+                    { name: "Google Cloud", icon: "fab fa-google" },
+                    { name: "ML", icon: "fas fa-brain" }
+                ]
+            },
+            about: {
+                paragraphs: [
+                    `Passionate and driven technology enthusiast skilled in <span class="highlight highlight-yellow">Python</span>, <span class="highlight highlight-pink">Java</span>, <span class="highlight highlight-cyan">JavaScript</span>, and <span class="highlight highlight-green">modern web technologies</span>, with a strong interest in <span class="highlight highlight-yellow">Artificial Intelligence</span> and <span class="highlight highlight-pink">AI tools</span>. I enjoy building <span class="highlight highlight-cyan">innovative digital solutions</span>, exploring <span class="highlight highlight-green">emerging technologies</span>, and continuously learning about <span class="highlight highlight-yellow">automation</span>, <span class="highlight highlight-pink">AI-powered products</span>, and <span class="highlight highlight-cyan">real-world problem solving</span>.`,
+                    `I’m always curious about <span class="highlight highlight-green">new technologies</span> and love experimenting with <span class="highlight highlight-yellow">creative ideas</span> that can make an impact. Along with development, I’m also enthusiastic about <span class="highlight highlight-green">product building</span>, <span class="highlight highlight-cyan">tech communities</span>, <span class="highlight highlight-green">entrepreneurship</span>, and collaborating on <span class="highlight highlight-yellow">meaningful projects</span> that combine <span class="highlight highlight-pink">innovation</span> with technology.`
+                ]
+            },
+            journey: {
+                mapCenter: [17.7294, 83.3093],
+                mapZoom: 8,
+                timeline: [
+                    {
+                        id: "exp-1",
+                        title: "Full Stack Developer Intern @ EduSkills",
+                        date: "Apr 2025 - Jun 2025",
+                        desc: "Built full-stack applications using Node.js, Express.js, HTML, CSS, and JavaScript. Developed responsive user interfaces to improve user experience, integrated RESTful APIs, and managed SQL/Firebase databases for authentication and real-time performance.",
+                        location: "Remote Internship",
+                        country: "Remote"
+                    },
+                    {
+                        id: "exp-2",
+                        title: "Django Developer Intern @ Hippo Cloud Technologies",
+                        date: "Dec 2023 - Mar 2024",
+                        desc: "Developed a Django-based Admin Interface with full CRUD operations and role-based access control. Improved data management efficiency, designed and optimized relational data models using Django ORM for scalability and performance.",
+                        location: "Visakhapatnam, India (Onsite)",
+                        country: "India"
+                    }
+                ],
+                mapLocations: [
+                    {
+                        coords: [28.6139, 77.2090],
+                        country: "Remote",
+                        companies: [
+                            {
+                                company: "EduSkills",
+                                role: "Full Stack Developer Intern",
+                                city: "Remote",
+                                period: "Apr 2025 - Jun 2025"
+                            }
+                        ]
+                    },
+                    {
+                        coords: [17.7294, 83.3093],
+                        country: "India",
+                        companies: [
+                            {
+                                company: "Hippo Cloud Technologies",
+                                role: "Django Developer Intern",
+                                city: "Visakhapatnam",
+                                period: "Dec 2023 - Mar 2024"
+                            }
+                        ]
+                    }
+                ]
+            },
+            skills: [
+                {
+                    title: "Frontend",
+                    icon: "fab fa-react",
+                    tags: [
+                        { name: "React.js", icon: "fab fa-react" },
+                        { name: "Angular", icon: "fab fa-angular" },
+                        { name: "Bootstrap", icon: "fab fa-bootstrap" }
+                    ]
+                },
+                {
+                    title: "Languages",
+                    icon: "fas fa-code",
+                    tags: [
+                        { name: "JavaScript", icon: "fab fa-js" },
+                        { name: "TypeScript", icon: "fab fa-js" },
+                        { name: "Python", icon: "fab fa-python" },
+                        { name: "Java", icon: "fab fa-java" },
+                        { name: "SQL", icon: "fas fa-database" },
+                        { name: "HTML", icon: "fab fa-html5" },
+                        { name: "CSS", icon: "fab fa-css3" }
+                    ]
+                },
+                {
+                    title: "Backend",
+                    icon: "fab fa-node",
+                    tags: [
+                        { name: "Node.js", icon: "fab fa-node-js" },
+                        { name: "Express.js", icon: "fas fa-server" },
+                        { name: "Firebase", icon: "fas fa-fire" }
+                    ]
+                },
+                {
+                    title: "Databases",
+                    icon: "fas fa-database",
+                    tags: [
+                        { name: "MongoDB", icon: "fas fa-leaf" },
+                        { name: "PostgreSQL", icon: "fas fa-elephant" },
+                        { name: "SQL Server", icon: "fas fa-server" }
+                    ]
+                },
+                {
+                    title: "Tools & More",
+                    icon: "fas fa-tools",
+                    tags: [
+                        { name: "Git", icon: "fab fa-git-alt" },
+                        { name: "GitHub", icon: "fab fa-github" },
+                        { name: "VSCode", icon: "fas fa-code" }
+                    ]
+                },
+                {
+                    title: "Architecture",
+                    icon: "fas fa-sitemap",
+                    isHighlight: true,
+                    tags: [
+                        { name: "Microservices", icon: "fas fa-cubes" },
+                        { name: "SaaS", icon: "fas fa-cloud" },
+                        { name: "Pub/Sub", icon: "fas fa-exchange-alt" },
+                        { name: "Routing Slip", icon: "fas fa-route" },
+                        { name: "Dead Letter Queues", icon: "fas fa-inbox" }
+                    ]
+                },
+                {
+                    title: "Methodologies",
+                    icon: "fas fa-users-cog",
+                    isHighlight: true,
+                    tags: [
+                        { name: "Agile", icon: "fas fa-sync-alt" },
+                        { name: "Scrum", icon: "fas fa-users" },
+                        { name: "CI/CD", icon: "fas fa-code-branch" },
+                        { name: "TDD", icon: "fas fa-vial" }
+                    ]
+                }
+            ],
+            projects: [
+                {
+                    title: "LazyFire",
+                    tagline: "A CLI tool for lazy developers. Built with Go.",
+                    link: "https://marjoballabani.github.io/lazyfire/",
+                    github: "https://github.com/marjoballabani/lazyfire",
+                    logo: "image/lazyfire-logo.svg"
+                },
+                {
+                    title: "Hypergrep",
+                    tagline: "A codebase intelligence engine for AI agents. Built with Rust.",
+                    link: "https://marjoballabani.github.io/hypergrep/",
+                    github: "https://github.com/marjoballabani/hypergrep/",
+                    logo: ""
+                }
+            ],
+            education: [
+                {
+                    degree: "Bachelor's Degree in Computer Science",
+                    school: "University of Tirana",
+                    period: "2013 - 2016",
+                    location: "Tirana, Albania"
+                }
+            ],
+            languages: [
+                { name: "English", stars: 3 },
+                { name: "Hindi", stars: 3 }
+            ]
+        };
+
+        // Active State Data
+        let currentConfig = JSON.parse(JSON.stringify(defaultPortfolioData));
+
+        // Tab switches
+        function switchTab(tabIndex) {
+            const panes = document.querySelectorAll('.tab-pane');
+            const tabButtons = document.querySelectorAll('.tab-btn');
+            
+            panes.forEach((pane, idx) => {
+                if (idx === tabIndex) {
+                    pane.classList.add('active');
+                    tabButtons[idx].classList.add('active');
+                } else {
+                    pane.classList.remove('active');
+                    tabButtons[idx].classList.remove('active');
+                }
+            });
+        }
+
+        // Initialize from local storage or defaults
+        window.addEventListener('load', () => {
+            const saved = localStorage.getItem('portfolio_config');
+            if (saved) {
+                try {
+                    currentConfig = JSON.parse(saved);
+                } catch (e) {
+                    console.error('Failed to load storage config', e);
+                }
+            }
+            populateForms();
+        });
+
+        function populateForms() {
+            // Hero info
+            document.getElementById('hero-desc').value = currentConfig.hero.description || '';
+            document.getElementById('social-github').value = currentConfig.hero.github || '';
+            document.getElementById('social-linkedin').value = currentConfig.hero.linkedin || '';
+            document.getElementById('social-email').value = currentConfig.hero.email || '';
+
+            // Badges
+            renderHeroBadgesList();
+
+            // About Text Paragraphs
+            const aboutContainer = document.getElementById('about-paragraphs-container');
+            aboutContainer.innerHTML = '';
+            (currentConfig.about.paragraphs || []).forEach((para, idx) => {
+                aboutContainer.appendChild(createParagraphEditorCard(para, idx));
+            });
+
+            // Journey Timeline
+            const timelineContainer = document.getElementById('timeline-container');
+            timelineContainer.innerHTML = '';
+            (currentConfig.journey.timeline || []).forEach((item, idx) => {
+                timelineContainer.appendChild(createTimelineEditorCard(item, idx));
+            });
+
+            // Map settings
+            document.getElementById('map-center-lat').value = currentConfig.journey.mapCenter ? currentConfig.journey.mapCenter[0] : 17.7294;
+            document.getElementById('map-center-lng').value = currentConfig.journey.mapCenter ? currentConfig.journey.mapCenter[1] : 83.3093;
+            document.getElementById('map-zoom').value = currentConfig.journey.mapZoom || 8;
+
+            // Map Locations
+            const locationsContainer = document.getElementById('map-locations-container');
+            locationsContainer.innerHTML = '';
+            (currentConfig.journey.mapLocations || []).forEach((loc, idx) => {
+                locationsContainer.appendChild(createLocationEditorCard(loc, idx));
+            });
+
+            // Skills box
+            const skillsContainer = document.getElementById('skills-container');
+            skillsContainer.innerHTML = '';
+            (currentConfig.skills || []).forEach((skill, idx) => {
+                skillsContainer.appendChild(createSkillEditorCard(skill, idx));
+            });
+
+            // Projects
+            const projectsContainer = document.getElementById('projects-container');
+            projectsContainer.innerHTML = '';
+            (currentConfig.projects || []).forEach((proj, idx) => {
+                projectsContainer.appendChild(createProjectEditorCard(proj, idx));
+            });
+
+            // Education
+            const educationContainer = document.getElementById('education-container');
+            educationContainer.innerHTML = '';
+            (currentConfig.education || []).forEach((edu, idx) => {
+                educationContainer.appendChild(createEducationEditorCard(edu, idx));
+            });
+
+            // Languages
+            const languagesContainer = document.getElementById('languages-container');
+            languagesContainer.innerHTML = '';
+            (currentConfig.languages || []).forEach((lang, idx) => {
+                languagesContainer.appendChild(createLanguageEditorCard(lang, idx));
+            });
+        }
+
+        // --- Render Helpers ---
+
+        function renderHeroBadgesList() {
+            const badgesList = document.getElementById('hero-badges-list');
+            badgesList.innerHTML = '';
+            (currentConfig.hero.badges || []).forEach((badge, idx) => {
+                const el = document.createElement('div');
+                el.className = 'editor-tag-badge';
+                el.innerHTML = `<i class="${badge.icon || 'fas fa-cog'}"></i> <span>${badge.name}</span> <i class="fas fa-times-circle" onclick="removeHeroBadge(${idx})"></i>`;
+                badgesList.appendChild(el);
+            });
+        }
+
+        function addHeroBadge() {
+            const name = document.getElementById('badge-name').value.trim();
+            const icon = document.getElementById('badge-icon').value.trim();
+            if (!name) return alert('Badge Name is required.');
+            
+            currentConfig.hero.badges = currentConfig.hero.badges || [];
+            currentConfig.hero.badges.push({ name, icon: icon || 'fas fa-cog' });
+            
+            document.getElementById('badge-name').value = '';
+            document.getElementById('badge-icon').value = '';
+            renderHeroBadgesList();
+        }
+
+        function removeHeroBadge(idx) {
+            currentConfig.hero.badges.splice(idx, 1);
+            renderHeroBadgesList();
+        }
+
+        function createParagraphEditorCard(text, idx) {
+            const el = document.createElement('div');
+            el.className = 'list-item-card';
+            el.innerHTML = `
+                <div class="list-item-header" style="background-color: var(--pink);">
+                    <h4><i class="fas fa-paragraph"></i> Paragraph #${idx + 1}</h4>
+                    <button onclick="removeAboutParagraph(${idx})" class="btn btn-danger btn-small" style="box-shadow: 2px 2px 0 var(--border);"><i class="fas fa-trash"></i> Delete</button>
+                </div>
+                <div class="list-item-body">
+                    <div class="form-group" style="margin-bottom: 0;">
+                        <textarea class="about-paragraph-input" style="min-height: 120px;">${text}</textarea>
+                    </div>
+                </div>
+            `;
+            return el;
+        }
+
+        function addAboutParagraph() {
+            currentConfig.about.paragraphs = currentConfig.about.paragraphs || [];
+            currentConfig.about.paragraphs.push('Write a paragraph here...');
+            populateForms();
+        }
+
+        function removeAboutParagraph(idx) {
+            currentConfig.about.paragraphs.splice(idx, 1);
+            populateForms();
+        }
+
+        function createTimelineEditorCard(item, idx) {
+            const el = document.createElement('div');
+            el.className = 'list-item-card';
+            el.innerHTML = `
+                <div class="list-item-header" style="background-color: var(--primary);">
+                    <h4><i class="fas fa-briefcase"></i> Timeline Card #${idx + 1}: ${item.title || 'New Item'}</h4>
+                    <button onclick="removeTimelineItem(${idx})" class="btn btn-danger btn-small" style="box-shadow: 2px 2px 0 var(--border);"><i class="fas fa-trash"></i> Delete</button>
+                </div>
+                <div class="list-item-body">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>ID Tag (must be unique, e.g. exp-1)</label>
+                            <input type="text" class="timeline-id" value="${item.id || ''}">
+                        </div>
+                        <div class="form-group">
+                            <label>Timeline Country Marker Target (e.g. India)</label>
+                            <input type="text" class="timeline-country" value="${item.country || ''}">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Title & Company</label>
+                            <input type="text" class="timeline-title" value="${item.title || ''}">
+                        </div>
+                        <div class="form-group">
+                            <label>Date Period</label>
+                            <input type="text" class="timeline-date" value="${item.date || ''}">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Location Info Text</label>
+                        <input type="text" class="timeline-location" value="${item.location || ''}">
+                    </div>
+                    <div class="form-group" style="margin-bottom: 0;">
+                        <label>Description Content</label>
+                        <textarea class="timeline-desc" style="min-height: 80px;">${item.desc || ''}</textarea>
+                    </div>
+                </div>
+            `;
+            return el;
+        }
+
+        function addTimelineItem() {
+            currentConfig.journey.timeline = currentConfig.journey.timeline || [];
+            currentConfig.journey.timeline.push({
+                id: 'exp-' + (currentConfig.journey.timeline.length + 1),
+                title: 'New Internship @ Company',
+                date: 'Apr 2026 - Jun 2026',
+                desc: 'Describe internship duties here...',
+                location: 'Remote Internship',
+                country: 'Remote'
+            });
+            populateForms();
+        }
+
+        function removeTimelineItem(idx) {
+            currentConfig.journey.timeline.splice(idx, 1);
+            populateForms();
+        }
+
+        function createLocationEditorCard(loc, idx) {
+            const el = document.createElement('div');
+            el.className = 'list-item-card';
+            
+            // Render sub-companies list
+            let companiesForms = '';
+            (loc.companies || []).forEach((c, cIdx) => {
+                companiesForms += `
+                    <div class="company-sub-box">
+                        <button onclick="removeLocationCompany(${idx}, ${cIdx})" class="btn btn-danger btn-small" style="position: absolute; top: 0.5rem; right: 0.5rem; padding: 0.25rem 0.5rem; font-size: 0.8rem;"><i class="fas fa-times"></i></button>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Company Name</label>
+                                <input type="text" class="loc-comp-name" data-loc="${idx}" data-idx="${cIdx}" value="${c.company || ''}">
+                            </div>
+                            <div class="form-group">
+                                <label>Role Title</label>
+                                <input type="text" class="loc-comp-role" data-loc="${idx}" data-idx="${cIdx}" value="${c.role || ''}">
+                            </div>
+                        </div>
+                        <div class="form-row" style="margin-top: 0.5rem;">
+                            <div class="form-group">
+                                <label>City</label>
+                                <input type="text" class="loc-comp-city" data-loc="${idx}" data-idx="${cIdx}" value="${c.city || ''}">
+                            </div>
+                            <div class="form-group">
+                                <label>Period</label>
+                                <input type="text" class="loc-comp-period" data-loc="${idx}" data-idx="${cIdx}" value="${c.period || ''}">
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            el.innerHTML = `
+                <div class="list-item-header" style="background-color: var(--cyan);">
+                    <h4><i class="fas fa-map-marker-alt"></i> Location Marker: ${loc.country || 'New Pin'}</h4>
+                    <button onclick="removeMapLocation(${idx})" class="btn btn-danger btn-small" style="box-shadow: 2px 2px 0 var(--border);"><i class="fas fa-trash"></i> Delete</button>
+                </div>
+                <div class="list-item-body">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Country Label Name</label>
+                            <input type="text" class="loc-country-label" value="${loc.country || ''}">
+                        </div>
+                        <div class="form-row" style="margin-bottom: 0;">
+                            <div class="form-group" style="margin-bottom: 0;">
+                                <label>Latitude</label>
+                                <input type="number" class="loc-lat" step="0.0001" value="${loc.coords ? loc.coords[0] : 0}">
+                            </div>
+                            <div class="form-group" style="margin-bottom: 0;">
+                                <label>Longitude</label>
+                                <input type="number" class="loc-lng" step="0.0001" value="${loc.coords ? loc.coords[1] : 0}">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="section-header-inline" style="margin-top: 1.5rem; margin-bottom: 0.5rem;">
+                        <h4 style="font-size: 1rem; text-transform: uppercase;">Company Popups</h4>
+                        <button onclick="addLocationCompany(${idx})" class="btn btn-cyan btn-small"><i class="fas fa-plus"></i> Add Popup</button>
+                    </div>
+                    <div class="companies-container">${companiesForms}</div>
+                </div>
+            `;
+            return el;
+        }
+
+        function addMapLocation() {
+            currentConfig.journey.mapLocations = currentConfig.journey.mapLocations || [];
+            currentConfig.journey.mapLocations.push({
+                country: 'NewMarker',
+                coords: [17.7294, 83.3093],
+                companies: [{
+                    company: 'Sample Company',
+                    role: 'Intern',
+                    city: 'Visakhapatnam',
+                    period: '2026'
+                }]
+            });
+            populateForms();
+        }
+
+        function removeMapLocation(idx) {
+            currentConfig.journey.mapLocations.splice(idx, 1);
+            populateForms();
+        }
+
+        function addLocationCompany(locIdx) {
+            currentConfig.journey.mapLocations[locIdx].companies = currentConfig.journey.mapLocations[locIdx].companies || [];
+            currentConfig.journey.mapLocations[locIdx].companies.push({
+                company: 'New Company',
+                role: 'Intern',
+                city: 'City',
+                period: 'Period'
+            });
+            saveSubformData();
+            populateForms();
+        }
+
+        function removeLocationCompany(locIdx, compIdx) {
+            currentConfig.journey.mapLocations[locIdx].companies.splice(compIdx, 1);
+            saveSubformData();
+            populateForms();
+        }
+
+        function createSkillEditorCard(skill, idx) {
+            const el = document.createElement('div');
+            el.className = 'list-item-card';
+
+            let tagBadges = '';
+            (skill.tags || []).forEach((t, tIdx) => {
+                tagBadges += `
+                    <div class="editor-tag-badge">
+                        <i class="${t.icon || 'fas fa-tag'}"></i> <span>${t.name}</span> <i class="fas fa-times-circle" onclick="removeSkillTag(${idx}, ${tIdx})"></i>
+                    </div>
+                `;
+            });
+
+            el.innerHTML = `
+                <div class="list-item-header" style="background-color: var(--green);">
+                    <h4><i class="fas fa-magic"></i> Skill Category: ${skill.title || 'New Category'}</h4>
+                    <button onclick="removeSkillCategory(${idx})" class="btn btn-danger btn-small" style="box-shadow: 2px 2px 0 var(--border);"><i class="fas fa-trash"></i> Delete</button>
+                </div>
+                <div class="list-item-body">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Category Title</label>
+                            <input type="text" class="skill-cat-title" value="${skill.title || ''}">
+                        </div>
+                        <div class="form-group">
+                            <label>Category Large Icon Class</label>
+                            <input type="text" class="skill-cat-icon" value="${skill.icon || ''}">
+                        </div>
+                    </div>
+                    <div class="form-group" style="margin-top: 0.5rem; margin-bottom: 1rem;">
+                        <label style="display: inline-flex; align-items: center; gap: 0.5rem; text-transform: none;">
+                            <input type="checkbox" class="skill-cat-highlight" ${skill.isHighlight ? 'checked' : ''} style="width: 18px; height: 18px;">
+                            Give background color highlight (Neo-Brutalist highlight box style)
+                        </label>
+                    </div>
+                    
+                    <div class="section-header-inline" style="margin-top: 1rem; margin-bottom: 0.5rem;">
+                        <h4 style="font-size: 1rem; text-transform: uppercase;">Tags / Tools list</h4>
+                    </div>
+                    <div class="badge-list-editor">${tagBadges}</div>
+                    
+                    <div class="form-row" style="grid-template-columns: 2fr 2fr 1fr; align-items: end; margin-top: 0.5rem;">
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <label>Tag Name</label>
+                            <input type="text" id="new-tag-name-${idx}" placeholder="e.g. Node.js">
+                        </div>
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <label>Tag Icon</label>
+                            <input type="text" id="new-tag-icon-${idx}" placeholder="e.g. fab fa-node-js">
+                        </div>
+                        <button onclick="addSkillTag(${idx})" class="btn btn-cyan btn-small" style="height: 42px; width: 100%;">Add Tag</button>
+                    </div>
+                </div>
+            `;
+            return el;
+        }
+
+        function addSkillCategory() {
+            currentConfig.skills = currentConfig.skills || [];
+            currentConfig.skills.push({
+                title: 'New Category',
+                icon: 'fas fa-cog',
+                tags: []
+            });
+            populateForms();
+        }
+
+        function removeSkillCategory(idx) {
+            currentConfig.skills.splice(idx, 1);
+            populateForms();
+        }
+
+        function addSkillTag(catIdx) {
+            const nameInput = document.getElementById(`new-tag-name-${catIdx}`);
+            const iconInput = document.getElementById(`new-tag-icon-${catIdx}`);
+            const name = nameInput.value.trim();
+            const icon = iconInput.value.trim();
+            
+            if (!name) return alert('Tag Name is required.');
+            
+            saveSubformData();
+            currentConfig.skills[catIdx].tags = currentConfig.skills[catIdx].tags || [];
+            currentConfig.skills[catIdx].tags.push({ name, icon: icon || 'fas fa-tag' });
+            
+            populateForms();
+        }
+
+        function removeSkillTag(catIdx, tagIdx) {
+            saveSubformData();
+            currentConfig.skills[catIdx].tags.splice(tagIdx, 1);
+            populateForms();
+        }
+
+        function createProjectEditorCard(proj, idx) {
+            const el = document.createElement('div');
+            el.className = 'list-item-card';
+            el.innerHTML = `
+                <div class="list-item-header" style="background-color: var(--pink);">
+                    <h4><i class="fas fa-folder-open"></i> Project #${idx + 1}: ${proj.title || 'New Project'}</h4>
+                    <button onclick="removeProject(${idx})" class="btn btn-danger btn-small" style="box-shadow: 2px 2px 0 var(--border);"><i class="fas fa-trash"></i> Delete</button>
+                </div>
+                <div class="list-item-body">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Project Title</label>
+                            <input type="text" class="proj-title" value="${proj.title || ''}">
+                        </div>
+                        <div class="form-group">
+                            <label>Logo Asset Path (leave empty for text-only "{ }" style)</label>
+                            <input type="text" class="proj-logo" value="${proj.logo || ''}">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Live Demo URL (opens when clicking card)</label>
+                            <input type="text" class="proj-link" value="${proj.link || ''}">
+                        </div>
+                        <div class="form-group">
+                            <label>GitHub Repository URL</label>
+                            <input type="text" class="proj-github" value="${proj.github || ''}">
+                        </div>
+                    </div>
+                    <div class="form-group" style="margin-bottom: 0;">
+                        <label>Description Tagline</label>
+                        <input type="text" class="proj-tagline" value="${proj.tagline || ''}">
+                    </div>
+                </div>
+            `;
+            return el;
+        }
+
+        function addProject() {
+            currentConfig.projects = currentConfig.projects || [];
+            currentConfig.projects.push({
+                title: 'New Project',
+                tagline: 'Short description of project highlights...',
+                link: '',
+                github: '',
+                logo: ''
+            });
+            populateForms();
+        }
+
+        function removeProject(idx) {
+            currentConfig.projects.splice(idx, 1);
+            populateForms();
+        }
+
+        function createEducationEditorCard(edu, idx) {
+            const el = document.createElement('div');
+            el.className = 'list-item-card';
+            el.innerHTML = `
+                <div class="list-item-header" style="background-color: var(--primary);">
+                    <h4><i class="fas fa-graduation-cap"></i> Education Card #${idx + 1}: ${edu.degree || 'New Education'}</h4>
+                    <button onclick="removeEducationItem(${idx})" class="btn btn-danger btn-small" style="box-shadow: 2px 2px 0 var(--border);"><i class="fas fa-trash"></i> Delete</button>
+                </div>
+                <div class="list-item-body">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Degree Title</label>
+                            <input type="text" class="edu-degree" value="${edu.degree || ''}">
+                        </div>
+                        <div class="form-group">
+                            <label>School/University Name</label>
+                            <input type="text" class="edu-school" value="${edu.school || ''}">
+                        </div>
+                    </div>
+                    <div class="form-row" style="margin-bottom: 0;">
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <label>Period Year (e.g. 2021 - 2025)</label>
+                            <input type="text" class="edu-period" value="${edu.period || ''}">
+                        </div>
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <label>Location (e.g. Visakhapatnam, India)</label>
+                            <input type="text" class="edu-location" value="${edu.location || ''}">
+                        </div>
+                    </div>
+                </div>
+            `;
+            return el;
+        }
+
+        function addEducationItem() {
+            currentConfig.education = currentConfig.education || [];
+            currentConfig.education.push({
+                degree: "Degree Title",
+                school: "College Name",
+                period: "2022 - 2026",
+                location: "Location"
+            });
+            populateForms();
+        }
+
+        function removeEducationItem(idx) {
+            currentConfig.education.splice(idx, 1);
+            populateForms();
+        }
+
+        function createLanguageEditorCard(lang, idx) {
+            const el = document.createElement('div');
+            el.className = 'list-item-card';
+            el.innerHTML = `
+                <div class="list-item-header" style="background-color: var(--cyan);">
+                    <h4><i class="fas fa-language"></i> Language: ${lang.name || 'New Language'}</h4>
+                    <button onclick="removeLanguageItem(${idx})" class="btn btn-danger btn-small" style="box-shadow: 2px 2px 0 var(--border);"><i class="fas fa-trash"></i> Delete</button>
+                </div>
+                <div class="list-item-body">
+                    <div class="form-row" style="margin-bottom: 0;">
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <label>Language Name</label>
+                            <input type="text" class="lang-name" value="${lang.name || ''}">
+                        </div>
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <label>Language Proficiency Stars (1-3 scale)</label>
+                            <select class="lang-stars">
+                                <option value="1" ${lang.stars == 1 ? 'selected' : ''}>★ (Basic)</option>
+                                <option value="2" ${lang.stars == 2 ? 'selected' : ''}>★★ (Conversational)</option>
+                                <option value="3" ${lang.stars == 3 ? 'selected' : ''}>★★★ (Fluent/Native)</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            `;
+            return el;
+        }
+
+        function addLanguageItem() {
+            currentConfig.languages = currentConfig.languages || [];
+            currentConfig.languages.push({ name: 'English', stars: 3 });
+            populateForms();
+        }
+
+        function removeLanguageItem(idx) {
+            currentConfig.languages.splice(idx, 1);
+            populateForms();
+        }
+
+
+        // --- Save & Form Parsing Logic ---
+
+        // Save nested forms input data into currentConfig variable before re-rendering
+        function saveSubformData() {
+            // About Paragraphs
+            const aboutParas = document.querySelectorAll('.about-paragraph-input');
+            currentConfig.about.paragraphs = Array.from(aboutParas).map(txt => txt.value);
+
+            // Timeline Items
+            const timelineCards = document.querySelectorAll('#timeline-container .list-item-card');
+            currentConfig.journey.timeline = Array.from(timelineCards).map(card => {
+                return {
+                    id: card.querySelector('.timeline-id').value.trim(),
+                    country: card.querySelector('.timeline-country').value.trim(),
+                    title: card.querySelector('.timeline-title').value.trim(),
+                    date: card.querySelector('.timeline-date').value.trim(),
+                    location: card.querySelector('.timeline-location').value.trim(),
+                    desc: card.querySelector('.timeline-desc').value.trim()
+                };
+            });
+
+            // Locations & Companies
+            const locationCards = document.querySelectorAll('#map-locations-container > .list-item-card');
+            currentConfig.journey.mapLocations = Array.from(locationCards).map((card, locIdx) => {
+                const country = card.querySelector('.loc-country-label').value.trim();
+                const lat = parseFloat(card.querySelector('.loc-lat').value);
+                const lng = parseFloat(card.querySelector('.loc-lng').value);
+                
+                // Get sub-companies
+                const compBoxes = card.querySelectorAll('.company-sub-box');
+                const companies = Array.from(compBoxes).map(box => {
+                    return {
+                        company: box.querySelector('.loc-comp-name').value.trim(),
+                        role: box.querySelector('.loc-comp-role').value.trim(),
+                        city: box.querySelector('.loc-comp-city').value.trim(),
+                        period: box.querySelector('.loc-comp-period').value.trim()
+                    };
+                });
+
+                return {
+                    country,
+                    coords: [lat || 0, lng || 0],
+                    companies
+                };
+            });
+
+            // Skills Category titles
+            const skillCards = document.querySelectorAll('#skills-container > .list-item-card');
+            skillCards.forEach((card, idx) => {
+                currentConfig.skills[idx].title = card.querySelector('.skill-cat-title').value.trim();
+                currentConfig.skills[idx].icon = card.querySelector('.skill-cat-icon').value.trim();
+                currentConfig.skills[idx].isHighlight = card.querySelector('.skill-cat-highlight').checked;
+            });
+
+            // Projects
+            const projCards = document.querySelectorAll('#projects-container .list-item-card');
+            currentConfig.projects = Array.from(projCards).map(card => {
+                return {
+                    title: card.querySelector('.proj-title').value.trim(),
+                    logo: card.querySelector('.proj-logo').value.trim(),
+                    link: card.querySelector('.proj-link').value.trim(),
+                    github: card.querySelector('.proj-github').value.trim(),
+                    tagline: card.querySelector('.proj-tagline').value.trim()
+                };
+            });
+
+            // Education
+            const eduCards = document.querySelectorAll('#education-container .list-item-card');
+            currentConfig.education = Array.from(eduCards).map(card => {
+                return {
+                    degree: card.querySelector('.edu-degree').value.trim(),
+                    school: card.querySelector('.edu-school').value.trim(),
+                    period: card.querySelector('.edu-period').value.trim(),
+                    location: card.querySelector('.edu-location').value.trim()
+                };
+            });
+
+            // Languages
+            const langCards = document.querySelectorAll('#languages-container .list-item-card');
+            currentConfig.languages = Array.from(langCards).map(card => {
+                return {
+                    name: card.querySelector('.lang-name').value.trim(),
+                    stars: parseInt(card.querySelector('.lang-stars').value)
+                };
+            });
+        }
+
+        // Reads the static/regular fields and syncs subforms
+        function getFormData() {
+            saveSubformData();
+            
+            currentConfig.hero.description = document.getElementById('hero-desc').value.trim();
+            currentConfig.hero.github = document.getElementById('social-github').value.trim();
+            currentConfig.hero.linkedin = document.getElementById('social-linkedin').value.trim();
+            currentConfig.hero.email = document.getElementById('social-email').value.trim();
+
+            const lat = parseFloat(document.getElementById('map-center-lat').value);
+            const lng = parseFloat(document.getElementById('map-center-lng').value);
+            currentConfig.journey.mapCenter = [lat || 17.7294, lng || 83.3093];
+            currentConfig.journey.mapZoom = parseInt(document.getElementById('map-zoom').value) || 8;
+
+            return currentConfig;
+        }
+
+        function saveToLocalStorage() {
+            const data = getFormData();
+            localStorage.setItem('portfolio_config', JSON.stringify(data));
+            alert('🎉 Configuration saved successfully to browser LocalStorage!');
+        }
+
+        function exportConfig() {
+            const data = getFormData();
+            const jsonString = JSON.stringify(data, null, 4);
+            const blob = new Blob([jsonString], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'portfolio_config.json';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        function importConfig(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const imported = JSON.parse(e.target.result);
+                    
+                    // Simple validation
+                    if (imported.hero && imported.about && imported.journey) {
+                        currentConfig = imported;
+                        populateForms();
+                        alert('✅ Configuration imported successfully!');
+                    } else {
+                        alert('❌ Error: The JSON file does not appear to be a valid portfolio configuration.');
+                    }
+                } catch (err) {
+                    alert('❌ Error: Failed to parse JSON file.');
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        async function exportProductionHtml() {
+            try {
+                // Read original index.html file
+                const response = await fetch('../index.html');
+                if (!response.ok) {
+                    throw new Error('Could not fetch ../index.html. Are you running local server?');
+                }
+                let htmlText = await response.text();
+                
+                // Retrieve current customized data config
+                const currentData = getFormData();
+                const dataJson = JSON.stringify(currentData, null, 4);
+                
+                // Match the defaultPortfolioData declaration inside index.html script tag
+                const pattern = /const defaultPortfolioData = \{[\s\S]*?\};/;
+                if (pattern.test(htmlText)) {
+                    htmlText = htmlText.replace(pattern, `const defaultPortfolioData = ${dataJson};`);
+                    
+                    // Trigger download
+                    const blob = new Blob([htmlText], { type: 'text/html' });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = 'index.html';
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(url);
+                    
+                    alert('🚀 Compiled production index.html downloaded successfully! You can place this file in your root folder to deploy it permanently.');
+                } else {
+                    alert('❌ Error: Could not locate the defaultPortfolioData block inside index.html for replacement.');
+                }
+            } catch (e) {
+                console.error(e);
+                alert('❌ Error: Failed to generate production HTML: ' + e.message);
+            }
+        }
+
+        // --- Icon Picker & Helper Logic ---
+        let activeIconInput = null;
+
+        // Track focused input
+        document.addEventListener('focusin', (e) => {
+            if (e.target && (
+                e.target.id === 'badge-icon' || 
+                e.target.classList.contains('skill-cat-icon') || 
+                e.target.id.startsWith('new-tag-icon-')
+            )) {
+                activeIconInput = e.target;
+                // Remove previous highlights
+                document.querySelectorAll('.icon-input-highlight').forEach(el => el.classList.remove('icon-input-highlight'));
+                // Highlight focused input
+                e.target.classList.add('icon-input-highlight');
+            }
+        });
+
+        function selectIcon(iconClass) {
+            if (activeIconInput) {
+                activeIconInput.value = iconClass;
+                // Visual feedback flash
+                activeIconInput.style.backgroundColor = '#a8e6cf';
+                setTimeout(() => {
+                    activeIconInput.style.backgroundColor = '';
+                }, 400);
+                
+                // Save state instantly
+                saveSubformData();
+                showToast(`Injected icon: "${iconClass}"`);
+            } else {
+                // Clipboard fallback
+                navigator.clipboard.writeText(iconClass);
+                showToast(`Copied to clipboard: "${iconClass}". Select an icon input first to auto-fill.`);
+            }
+        }
+
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            if (!toast) return;
+            toast.textContent = message;
+            toast.style.display = 'block';
+            
+            // Clear existing timeout
+            if (window.toastTimeout) {
+                clearTimeout(window.toastTimeout);
+            }
+            
+            window.toastTimeout = setTimeout(() => {
+                toast.style.display = 'none';
+            }, 3000);
+        }
+
+        function filterIcons() {
+            const query = document.getElementById('icon-search').value.toLowerCase().trim();
+            const items = document.querySelectorAll('.picker-item');
+            
+            items.forEach(item => {
+                const title = (item.getAttribute('title') || '').toLowerCase();
+                const iconClass = (item.querySelector('i').className || '').toLowerCase();
+                if (title.includes(query) || iconClass.includes(query)) {
+                    item.style.display = 'flex';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+            
+            // Toggle categories
+            const categories = document.querySelectorAll('.picker-category');
+            categories.forEach(cat => {
+                const visibleItems = cat.querySelectorAll('.picker-item:not([style*="display: none"])');
+                if (visibleItems.length === 0) {
+                    cat.style.display = 'none';
+                } else {
+                    cat.style.display = 'block';
+                }
+            });
+        }
+
+        // --- Authentication Password Lock ---
+        const ACCESS_KEY = "Sahitsai@9866";
+
+        // Check authentication state on startup
+        window.addEventListener('DOMContentLoaded', () => {
+            const isAuth = sessionStorage.getItem('admin_authenticated') === 'true';
+            const overlay = document.getElementById('lock-overlay');
+            if (isAuth) {
+                overlay.style.display = 'none';
+            } else {
+                overlay.style.display = 'flex';
+                document.getElementById('admin-passkey').focus();
+            }
+        });
+
+        function attemptUnlock() {
+            const input = document.getElementById('admin-passkey');
+            const pass = input.value;
+            const overlay = document.getElementById('lock-overlay');
+            const card = document.getElementById('lock-card');
+
+            if (pass === ACCESS_KEY) {
+                sessionStorage.setItem('admin_authenticated', 'true');
+                
+                // Entrance animation
+                card.style.transform = 'scale(0.95)';
+                card.style.opacity = '0';
+                card.style.transition = 'all 0.25s ease';
+                
+                setTimeout(() => {
+                    overlay.style.opacity = '0';
+                    overlay.style.transition = 'opacity 0.25s ease';
+                    setTimeout(() => {
+                        overlay.style.display = 'none';
+                        overlay.style.opacity = '1'; // reset
+                        card.style.transform = '';
+                        card.style.opacity = '1';
+                    }, 250);
+                }, 100);
+
+                showToast("🔓 Access Granted. Control Panel Unlocked.");
+            } else {
+                // Shake card
+                card.classList.add('lock-shake');
+                setTimeout(() => {
+                    card.classList.remove('lock-shake');
+                }, 400);
+
+                showToast("❌ Decryption Key Incorrect. Access Denied.");
+                input.value = '';
+                input.focus();
+            }
+        }
+
+        function handleLockKeyDown(e) {
+            if (e.key === 'Enter') {
+                attemptUnlock();
+            }
+        }
+
+        function lockAdmin() {
+            sessionStorage.removeItem('admin_authenticated');
+            const overlay = document.getElementById('lock-overlay');
+            overlay.style.display = 'flex';
+            
+            const input = document.getElementById('admin-passkey');
+            input.value = '';
+            input.focus();
+
+            showToast("🔒 Session Locked.");
+        }
+    </script>
+</body>
+</html>
